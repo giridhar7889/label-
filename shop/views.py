@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import product,Contact
+from .models import product,Contact,Orders
 from math import ceil
 
 # Create your views here.
@@ -59,6 +59,29 @@ def products(request,myid ):
 
         return render(request, "shop/products.html",{"product":products[0]})
 def checkout(request):
+        if request.method == "POST":
+                items_json = request.POST.get('itemsjson', '')
+                name = request.POST.get("name", "")
+                email = request.POST.get("email", "")
+                address1 = request.POST.get("address1", "")
+                address2 = request.POST.get("address2", "")
+                city = request.POST.get("city", "")
+                state = request.POST.get("state", "")
+                zip = request.POST.get("zip", "")
+                phone_number = request.POST.get("phone", "")
+                order = Orders(items_json= items_json,name=name, email=email, address1=address1, address2=address2,
+                               city=city, state=state,
+                               zip=zip, Phone_number=phone_number)
+                order.save()
+                thank = True
+                id = order.order_id
+                print(id)
+                return render(request, "shop/checkout.html", {"thank": thank, "id": id})
+
+
+
+
+
         return render(request, "shop/checkout.html")
 
 

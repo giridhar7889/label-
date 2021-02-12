@@ -13,42 +13,46 @@
         </div>
         <div class="col my-4">
                 <h2>Step-2 Enter your address and other details: </h2>
-                <form class="row g-3">
-                          <div class="col-md-6">
+                <form class="row g-3"method="post" action="/shop/checkout/"> {% csrf_token %}
+                        <input type="hidden" name="itemsjson" id="itemsjson">
+                        <div class="col-md-6">
                                 <label for="inputname" class="form-label">Name</label>
-                                <input type="name" class="form-control" id="inputname" placeholder="Full Name">
+                                <input type="text" class="form-control" id="name" name="name"
+                                       placeholder="Full Name">
                         </div>
                         <div class="col-md-6">
                                 <label for="inputEmail4" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+                                <input type="email" class="form-control" id="Email" name="email" placeholder="Email">
                         </div>
 
                         <div class="col-12">
                                 <label for="inputAddress" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                                <input type="text" class="form-control" id="Address1" name="address1"
+                                       placeholder="1234 Main St">
                         </div>
                         <div class="col-12">
                                 <label for="inputAddress2" class="form-label">Address line 2</label>
-                                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+                                <input type="text" class="form-control" id="Address2" name="address2"
+                                       placeholder="Apartment, studio, or floor">
                         </div>
                         <div class="col-md-6">
                                 <label for="inputCity" class="form-label">City</label>
-                                <input type="text" class="form-control" id="inputCity">
+                                <input type="text" class="form-control" id="City" name="city">
                         </div>
                         <div class="col-md-4">
                                 <label for="inputstate" class="form-label">Enter State</label>
-                                 <input type="text" class="form-control" id="inputstate" placeholder="state">
+                                 <input type="text" class="form-control" id="state" name="state" placeholder="state">
                         </div>
                         <div class="col-md-2">
                                 <label for="inputZip" class="form-label">Zip</label>
-                                <input type="text" class="form-control" id="inputZip">
+                                <input type="text" class="form-control" id="Zip" name="zip">
                         </div>
                         <div class="col">
-                                <label for="inputphone" class="form-label">Enter Phone number</label>
-                                <input type="tel" class="form-control" id="inputphone">
+                                <label for="inputZip" class="form-label">Enter Phone number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone">
                         </div>
                         <div class="col-12 my-2">
-                                <button type="submit" class="btn btn-primary">Place Order</button>
+                                <button " type="submit" class="btn btn-primary">Place Order</button>
                         </div>
                 </form>
 
@@ -92,6 +96,22 @@
      }
     }
     document.querySelector('#'+'cart').innerHTML=sum;
+
+   $('#itemsjson').val(JSON.stringify(cart));
+
+
+       {% if thank %}
+         alert('thanks for shopping with us.Your  orderid is {{id}} .Track your order using specified order id ')
+         localStorage.clear();
+         document.location="/shop";
+      {% endif %}
+     
+
+     
+
+
+    
+
 </script>
 
   
