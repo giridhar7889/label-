@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import product,Contact,Orders
+from .models import product,Contact,Orders,OrderUpdate
 from math import ceil
+import json
 
-# Create your views here.
+
 
 def index(request):
-        #products=product.objects.all()
 
 
 
@@ -26,8 +26,7 @@ def index(request):
 
 
 
-        #params = {'no_of_slides':nslides,'range':range(1,nslides),'products': products}
-        #allprods=[[products,range(1,nslides),nslides],[products,range(1,nslides),nslides]]
+
         params={"allprods":allprods}
 
         return render(request,"shop/index.html",params)
@@ -51,7 +50,33 @@ def contact(request):
         return render(request, "shop/contact.html")
 
 def track(request):
+        if request.method == "POST":
+                order_id = request.POST.get('orderId', '')
+                email = request.POST.get('email', '')
+                try:
+                        order = Orders.objects.filter(order_id=order_id, email=email)
+                        if len(order) > 0:
+                                update = OrderUpdate.objects.filter(order_id=order_id)
+
+                                updates = []
+                                for item in update:
+                                        updates.append({'text': item.update_desc, 'time': item.timestamp})
+                                        response = json.dumps(updates, default=str)
+
+                                return HttpResponse(response)
+                        else:
+                                return HttpResponse('{}')
+
+                except Exception as e:
+                        return HttpResponse('{}')
         return render(request, "shop/track.html")
+
+
+
+
+
+
+
 def search(request):
         return render(request, "shop/search.html")
 def products(request,myid ):
@@ -73,9 +98,10 @@ def checkout(request):
                                city=city, state=state,
                                zip=zip, Phone_number=phone_number)
                 order.save()
+                update=OrderUpdate(order_id=order.order_id,update_desc="The order has been placed")
+                update.save()
                 thank = True
                 id = order.order_id
-                print(id)
                 return render(request, "shop/checkout.html", {"thank": thank, "id": id})
 
 
