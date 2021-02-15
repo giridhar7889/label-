@@ -12,17 +12,27 @@ def index(request):
 
 
         allprods=[]
-        catprod=product.objects.values("subcategory","id")
+        catprod=product.objects.values("subcategory","id","price")
 
-        cats={item["subcategory"] for item in catprod}
+        cats={item["subcategory"] for item in catprod }
+
+       
+
+
+
+
 
         for cat in cats:
                 products=product.objects.filter(subcategory=cat)
 
+
                 print(products)
+
+
                 n = len(products)
                 nslides = n // 4 + ceil((n / 4) - (n // 4))
                 allprods.append([products,range(1,nslides),nslides])
+
 
 
 
@@ -34,20 +44,22 @@ def index(request):
 def about(request):
         return render(request, "shop/about.html")
 def contact(request):
+        thank=False
         if request.method=="POST":
-                print(request)
-        name=request.POST.get("name","")
 
-        email = request.POST.get("email", "")
+                name=request.POST.get("name","")
 
-        phonenumber = request.POST.get("phone", "")
+                email = request.POST.get("email", "")
 
-        desc = request.POST.get("desc", "")
+                phonenumber = request.POST.get("phone", "")
 
-        contact=Contact(name=name,email=email,phone=phonenumber,desc=desc)
-        contact.save()
+                desc = request.POST.get("desc", "")
 
-        return render(request, "shop/contact.html")
+                contact=Contact(name=name,email=email,phone=phonenumber,desc=desc)
+                contact.save()
+                thank=True
+
+        return render(request, "shop/contact.html",{'thank':thank})
 
 def track(request):
         if request.method == "POST":
@@ -61,7 +73,7 @@ def track(request):
                                 updates = []
                                 for item in update:
                                         updates.append({'text': item.update_desc, 'time': item.timestamp})
-                                        response = json.dumps(updates, default=str)
+                                        response = json.dumps([updates,order[0].items_json], default=str)
 
                                 return HttpResponse(response)
                         else:
