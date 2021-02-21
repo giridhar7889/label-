@@ -41,6 +41,43 @@ def index(request):
 
         return render(request,"shop/index.html",params)
 
+
+def searchMatch(query,item):
+        '''return true if only query matchges the item '''
+        if query in item.desc.lower() or query in item.product_name.lower() or query in item.subcategory.lower():
+                return True
+        else:
+                return False
+
+
+
+def search(request):
+        query=request.GET.get('search')
+        allprods = []
+        catprod = product.objects.values("subcategory", "id", "price")
+
+        cats = {item["subcategory"] for item in catprod}
+
+        for cat in cats:
+                products = product.objects.filter(subcategory=cat)
+                prod=[item for item in products if searchMatch(query ,item)]
+
+                print(prod)
+
+                n = len(prod)
+                nslides = n // 4 + ceil((n / 4) - (n // 4))
+                if len(prod)!=0:
+                        allprods.append([prod, range(1, nslides), nslides])
+
+
+
+        params = {"allprods": allprods,"msg":"","query":query[:5]}
+        if query==0 or len(query)<4 or len(allprods)==0:
+                params={"msg":"Please make sure to enter relavant search query"}
+
+
+        return render(request, "shop/search.html", params)
+
 def about(request):
         return render(request, "shop/about.html")
 def contact(request):
@@ -73,14 +110,16 @@ def track(request):
                                 updates = []
                                 for item in update:
                                         updates.append({'text': item.update_desc, 'time': item.timestamp})
-                                        response = json.dumps([updates,order[0].items_json], default=str)
+                                        response = json.dumps({"status":"success","updates":updates,"itemsJson":
+                                                               order[0].items_json} ,
+                                                                        default=str)
 
                                 return HttpResponse(response)
                         else:
-                                return HttpResponse('{}')
+                                return HttpResponse('{"status":"noitems"}')
 
                 except Exception as e:
-                        return HttpResponse('{}')
+                        return HttpResponse('{"status":"error"}')
         return render(request, "shop/track.html")
 
 
@@ -88,9 +127,6 @@ def track(request):
 
 
 
-
-def search(request):
-        return render(request, "shop/search.html")
 def products(request,myid ):
         products = product.objects.filter(id=myid)
 
