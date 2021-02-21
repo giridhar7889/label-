@@ -26,7 +26,7 @@ SECRET_KEY = 'j5qav%7aubew2f)u56m9ckhzuzgg39yinzx&ic+3xu*0br9div'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['labelsouravdas.herokuapp.com' ]
+ALLOWED_HOSTS = ['labelsouravdas.herokuapp.com' , '127.0.0.1']
 
 
 # Application definition
